@@ -1,16 +1,27 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity, Alert } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import Emoji from 'react-native-emoji';
 import PropTypes from 'prop-types';
 
 class HrCard extends React.Component {
+
+  handleDetailNavigation = (burc) => {
+    return () => {
+      this.props.navigation.navigate('Horoscope', {
+        burcTitle: burc.title,
+        burcYorum: burc.yorum,
+        burcIcon: burc.icon
+      });    
+    }
+  }
+
   render(){
     return(
-      <TouchableOpacity onPress={() => {alert('adsasd')}}>
+      <TouchableOpacity onPress={this.handleDetailNavigation(this.props.burc)}>
       <View style={styles.HrCard}>
         <Emoji name={this.props.burc.icon ? this.props.burc.icon : "coffee"} style={styles.Emoji}/>
-        <Text>{this.props.burc.title}</Text>
+        <Text style={styles.burcText}>{this.props.burc.title}</Text>
       </View>
       </TouchableOpacity>
     )
@@ -59,8 +70,11 @@ class HomeScreen extends React.Component {
     if(isDataLoaded) {
       return (
         <View style={styles.container}>
-          <Text style={styles.Text}>Burcunu Sec</Text>
-          <HrCard burc={this.state.data[0]} />
+        {this.state.data.map(burc => {
+          return(
+            <HrCard key={keys++} burc={burc}/>
+          )
+        })}
         </View>
       );
     }
@@ -112,15 +126,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 10,
-    backgroundColor: '#ff0000'
+    backgroundColor: '#fff',
+    margin: 10,
   },
   Emoji: {
-    fontSize: 50,
+    fontSize: 80,
+  },
+  burcText: {
+    fontSize: 20,
+    fontWeight: 'bold',
   },
   container: {
     flex: 1,
+    flexDirection: 'row',
     backgroundColor: '#fff',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
     paddingHorizontal: 30,
   },
